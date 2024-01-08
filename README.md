@@ -10,7 +10,7 @@ A slightly modified version of icanos [hassio-plejd](https://github.com/icanos/h
 ---
 services:
   plejd2mqtt:
-    image: oven-lab/plejd2mqtt:latest
+    image: ovenlab/plejd2mqtt:latest
     container_name: plejd2mqtt
     privileged: true
     environment:
@@ -37,7 +37,7 @@ sudo docker run \
 -e mqttPassword=YOUR_MQTT_PASS \
 -v /var/run/dbus:/var/run/dbus \
 --privileged \
-oven-lab/plejd2mqtt:latest
+ovenlab/plejd2mqtt:latest
 ```
 
 ## Configuration Parameters
