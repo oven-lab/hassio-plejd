@@ -1,38 +1,64 @@
-# Hass.io Plejd add-on repository
+# Plejd2mqtt
 
-Hass.io add-on for Plejd home automation devices. Gives you the ability to control the Plejd home automation devices through Home Assistant.
-It uses MQTT to communicate with Home Assistant and supports auto discovery of the devices in range.
+A slightly modified version of icanos [hassio-plejd](https://github.com/icanos/hassio-plejd) made to run in pure docker
 
-It also supports notifications so that changed made in the Plejd app are propagated to Home Assistant.
+## Quick start
 
-Thanks to [ha-plejd](https://github.com/klali/ha-plejd) for inspiration.
+### Docker compose (Recommended)
 
-Disclaimer:
-I am in no way affiliated with Plejd and am solely doing this as a hobby project.
+```yaml
+---
+services:
+  plejd2mqtt:
+    image: oven-lab/plejd2mqtt:latest
+    container_name: plejd2mqtt
+    privileged: true
+    environment:
+      - site=YOUR_SITE
+      - username=YOUR_USERNAME
+      - password=YOUR_PASSWORD
+      - mqttBroker=YOUR_BROKER
+      - mqttUsername=YOUR_MQTT_USER
+      - mqttPassword=YOUR_MQTT_PASS
+    volumes:
+      - /var/run/dbus:/var/run/dbus
+    restart: unless-stopped
+```
 
-**Did you like this? Consider helping me continue the development:**  
-[Buy me a coffee](https://www.buymeacoffee.com/w1ANTUb)
-
-[![Gitter](https://badges.gitter.im/hassio-plejd/community.svg)](https://gitter.im/hassio-plejd/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
-
-## Addons
-
-The repository contains only one addon, [Plejd](plejd/). Please see [Plejd addon readme](plejd/README.md) and [Plejd addon changelog](plejd/CHANGELOG.md) for details.
-
-## License
+### CLI
 
 ```
-Copyright 2023 Marcus Westin <marcus@sekurbit.se>
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+sudo docker run \
+-e site=YOUR_SITE \
+-e username=YOUR_USERNAME \
+-e password=YOUR_PASSWORD \
+-e mqttBroker=YOUR_BROKER \
+-e mqttUsername=YOUR_MQTT_USER \
+-e mqttPassword=YOUR_MQTT_PASS \
+-v /var/run/dbus:/var/run/dbus \
+--privileged \
+oven-lab/plejd2mqtt:latest
 ```
+
+## Configuration Parameters
+
+The container needs some configuration, which is defined via these environment variables.
+
+| Parameter            | Value                                                                                                                                                                                    |
+| -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| site (Required)        | Name of your Plejd site, the name is displayed in the Plejd app (top bar).                                                                                                               |
+| username (Required)    | Email/username of your Plejd account, this is used to fetch the crypto key and devices from the Plejd API.                                                                               |
+| password (Required)    | Password of your Plejd account, this is used to fetch the crypto key and devices from the Plejd API.                                                                                     |
+| mqttBroker             | URL of the MQTT Broker, eg. mqtt://                                                                                                                                                      |
+| mqttUsername (Required)| Username of the MQTT broker                                                                                                                                                              |
+| mqttPassword (Required)| Password of the MQTT broker                                                                                                                                                              |
+| includeRoomsAsLights   | Adds all rooms as lights, making it possible to turn on/off lights by room instead. Setting this to false will ignore all rooms.                                                         |
+| updatePlejdClock       | Hourly update Plejd devices' clock if out of sync. Clock is used for time-based scenes. Not recommended if you have a Plejd gateway. Clock updates may flicker scene-controlled devices. |
+| logLevel               | Minimim log level. Supported values are `error`, `warn`, `info`, `debug`, `verbose`, `silly` with increasing amount of logging. Do not log more than `info` for production purposes.     |
+| connectionTimeout      | Number of seconds to wait when scanning and connecting. Might need to be tweaked on platforms other than RPi 4. Defaults to: 2 seconds.                                                  |
+| writeQueueWaitTime     | Wait time between message sent to Plejd over BLE, defaults to 400. If that doesn't work, try changing the value higher in steps of 50.        
+
+See [original repo](https://github.com/icanos/hassio-plejd/edit/master/plejd/README.md) for more info.
+
+## Support
+Since most of the work was done by icanos, i would be very happy if you support them, instead of me: [Buy me a coffee](https://www.buymeacoffee.com/w1ANTUb).

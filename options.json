@@ -1,0 +1,14 @@
+{
+    "site": "Tommy Eliasson",
+    "username": "wbjornstrom1@gmail.com",
+    "password": "Qipf2641!",
+    "mqttBroker": "mqtt://",
+    "mqttUsername": "mosquittomqtt",
+    "mqttPassword": "mqtt",
+    "includeRoomsAsLights": "false",
+    "preferCachedApiResponse": "false",
+    "updatePlejdClock": "false",
+    "logLevel": "info",
+    "connectionTimeout": 2,
+    "writeQueueWaitTime": 400
+}
